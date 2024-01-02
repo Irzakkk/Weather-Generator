@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="card">
+      <div class="search">
+        <input
+          type="text"
+          spellcheck="false"
+          name=""
+          id=""
+          placeholder="Search for location"
+        />
+        <button>
+          <img src="images/search.png" alt="" />
+        </button>
+    </div>
+    <div class="error">
+        <p>Enter a valid location</p>
+    </div>
+      <div class="weather">
+        <img class="weather-icon" src="images/drizzle.png" alt="" />
+        <h1 class="temp">22°C</h1>
+        <h2 class="city">India</h2>
+        <div class="details">
+          <div class="col">
+            <img src="images/humidity.png" alt="" />
+            <div class="text-container">
+              <p class="humidity-value">78%</p>
+              <p class="humidity-label">Humidity</p>
+            </div>
+          </div>
+          <div class="col">
+            <img src="images/wind.png" alt="" />
+            <div class="text-container">
+              <p class="wind-value">20km/hr</p>
+              <p class="wind-label">Wind Speed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // https://api.openweathermap.org/data/2.5/weather?units=metric&appid=e5fd6155ae8d71b3f5c6e0f4f35daebb
+      const apiKey = "e5fd6155ae8d71b3f5c6e0f4f35daebb";
+      const apiURL =
+        "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+        const searchText=document.querySelector(".search input");
+        const searchBtn=document.querySelector(".search button");
+        const weather=document.querySelector(".weather .weather-icon");
+        // const city=searchText.value
+      async function fetchData(city) {
+        // &q=bangalore
+        const response = await fetch(apiURL +city+ `&appid=${apiKey}`);
+        var data = await response.json();
+        if(data.cod==404){
+            document.querySelector(".error").style.display="block";
+            document.querySelector(".weather").style.display="none";
+            return;
+        }
+        else{
+            // console.log(response);
+        document.querySelector(".error").style.display="none";
+        console.log(data);
+        document.querySelector(".weather .city").innerHTML = data.name;
+        document.querySelector(".weather .temp").innerHTML =
+          Math.floor(data.main.temp) + "°C";
+        document.querySelector(".humidity-value").innerHTML =
+          data.main.humidity+"%";
+        document.querySelector(".wind-value").innerHTML = data.wind.speed+" km/hr";
+
+        if(data.weather[0].main=="Clouds"){
+            weather.src="images/clouds.png";
+        }
+        else if(data.weather[0].main=="Clear"){
+            weather.src="images/clear.png";
+        }
+        else if(data.weather[0].main=="Drizzle"){
+            weather.src="images/drizzle.png";
+        }
+        else if(data.weather[0].main=="Mist"){
+            weather.src="images/mist.png";
+        }
+
+        document.querySelector(".weather").style.display="block";
+        
+      }
+    }
+      searchBtn.addEventListener("click", ()=>{
+          fetchData(searchText.value);
+      })
+      searchText.addEventListener("keypress",function(event){
+        if(event.key==="Enter"){
+            fetchData(searchText.value);
+        }
+      })
+    </script>
+  </body>
+</html>
